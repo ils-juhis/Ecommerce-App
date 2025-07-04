@@ -350,9 +350,9 @@ function FilterBox() {
                                     />
                                     <div className="d-flex justify-content-between">
                                         <span>Rs. 200</span>
-                                        <span>Rs. 10,000 +</span>
+                                        <span>Rs. 12,000 +</span>
                                     </div>
-                                </div>
+                                </div> 
 
                                 <div className="category-filter">
                                     <div className="title">
