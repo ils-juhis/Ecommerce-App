@@ -1,21 +1,21 @@
-.orders-container{
-    min-height: calc(100vh - 70px);
-    
+.order-details{
+    min-height: 50vh;
+
     .heading{
         font-size: 22px;
         font-weight: 500;
         margin-bottom: 20px;
+        color: skyblue;
     }
 
-    .cart-item-container{
-        width: 70%;
-
-        @media screen and (max-width:992px) {
-            width: 100%;
-        }
+    .sub-heading{
+        font-size: 19px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: gray;
     }
 
-    .order-item{
+    .ordered-item{
         width: 100%;
         height: fit-content;
     
@@ -91,16 +91,40 @@
             overflow: hidden;
             height: 100%;
     
-
+            .product-details{
+                cursor: pointer;
+                .product-name{
+                    font-weight: 600;
+                }
+            
+                .product-description{
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: 14px;
+                    color: gray;
+                }
+            
+                .product-price{
+                    font-weight: 600;
+                }
+        
+                .product-rating{
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                }
+            }
     
-            .cancel-order {
-                background-color: #fb1b1b;
+            .buy-now {
+                background-color: #FB641B;
                 border: none;
                 outline: none;
                 color: white;
                 font-size: 13px;
                 font-weight: 600;
                 padding: 5px 10px;
+                margin-top: 20px;
                 text-transform: uppercase;
                 border-radius: 3px;
     
@@ -113,15 +137,15 @@
                 }
             }
     
-            .view-btn{
-                color: rgb(58, 148, 251);
+            .remove-btn{
+                color: red;
                 text-transform: uppercase;
                 background-color: transparent;
                 outline: none;
                 border: none;
-                font-weight: 600;
+                font-weight: 700;
                 font-size: 13px;
-                margin-right: 20px;
+                margin-left: 20px;
             }
         }
     }

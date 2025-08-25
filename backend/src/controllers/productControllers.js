@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 const Cart = require("../models/cartModel");
+const Order = require("../models/orderModel");
 const Errorhandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const universalFun  = require("../utils/universalFunctions")
@@ -149,51 +150,70 @@ exports.getAllProducts = catchAsyncErrors(async (req, res, next) => {
   )
 });
 
-exports.getProductDetails = catchAsyncErrors( async (req, res, next)=>{
-
-  let product = await Product.findOne({_id: req.params.id}).populate("category");
-  if(!product){
-    return next(new Errorhandler(responseMessage.ERROR.PRODUCT_NOT_FOUND.customMessage, responseMessage.ERROR.PRODUCT_NOT_FOUND.statusCode))
+exports.getProductDetails = catchAsyncErrors(async (req, res, next) => {
+  let product = await Product.findOne({ _id: req.params.id }).populate("category");
+  if (!product) {
+    return next(
+      new Errorhandler(
+        responseMessage.ERROR.PRODUCT_NOT_FOUND.customMessage,
+        responseMessage.ERROR.PRODUCT_NOT_FOUND.statusCode
+      )
+    );
   }
-
 
   const { accessToken } = req.cookies;
   let cart;
+  let canReview = false; // default
+
   if (accessToken) {
-    jwt.verify(accessToken, process.env.ACCESS_JWT_SECRET, async(err, decodedData)=>{
-      if(!err){
-        cart = await Cart.findOne({user: decodedData.id, 'cartItems.product': req.params.id})
-        
+    jwt.verify(accessToken, process.env.ACCESS_JWT_SECRET, async (err, decodedData) => {
+      if (!err) {
+        const userId = decodedData.id;
+        cart = await Cart.findOne({ user: userId, 'cartItems.product': req.params.id });
+
+        const order = await Order.findOne({
+          user: userId,
+          'orderItems.product': req.params.id,
+          orderStatus: 'Delivered'
+        });
+
+        canReview = order ? true : false;
+
         return universalFun.sendSuccess(
           responseMessage.SUCCESS.PRODUCT_DETAILS,
           {
             ...product.toJSON(),
-            addedInCart: cart ? true : false
+            addedInCart: cart ? true : false,
+            canReview
           },
           res
-        )
-      }else{
+        );
+      } else {
         return universalFun.sendSuccess(
           responseMessage.SUCCESS.PRODUCT_DETAILS,
           {
             ...product.toJSON(),
-            addedInCart: false
+            addedInCart: false,
+            canReview: false
           },
           res
-        )
+        );
       }
-    })
-  }else{
+    });
+  } else {
+    // Not logged in
     return universalFun.sendSuccess(
       responseMessage.SUCCESS.PRODUCT_DETAILS,
       {
         ...product.toJSON(),
-        addedInCart: false
+        addedInCart: false,
+        canReview: false
       },
       res
-    )
+    );
   }
-})
+});
+
 
 //Create new review or update review
 exports.createProductReview = catchAsyncErrors(async(req, res, next)=>{

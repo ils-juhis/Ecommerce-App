@@ -70,6 +70,15 @@ export function loginReducer(state = {
         }
       }
 
+    case type.CLEAR_CART_COUNT:
+      return{
+        ...state,
+        userData: {
+          ...state.userData,
+          cartItemsCount: 0
+        }
+      }
+
     case type.LOGIN_FAIL:
       return {
         ...state,

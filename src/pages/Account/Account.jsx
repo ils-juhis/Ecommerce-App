@@ -29,7 +29,7 @@ function Account() {
           <img className='arrow' src={rightArrow} alt="" />
         </div>
 
-        <div className="account-item" onClick={()=> navigate('/account/wishlist')}>
+        <div className="account-item opacity-50">
           <div className='d-flex align-items-center'>
             <BsFillHeartFill size={25} color='red'/>
             <div className='ms-3'>

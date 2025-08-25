@@ -12,6 +12,8 @@ router.route("/order/:id").get(isAuthenticatedUser, validator.getSingleOrder, or
 
 router.route("/admin/orders").get(isAuthenticatedUser, authorizeRoles("admin"), orderControllers.getAllOrders);
 
+router.route("/admin/orders/cancel/:id").put(isAuthenticatedUser, authorizeRoles("user", "admin"), orderControllers.cancelOrder);
+
 router.route("/admin/order/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), validator.updateOrder, orderControllers.updateOrder)
   .delete(isAuthenticatedUser, authorizeRoles("admin"), validator.deleteOrder, orderControllers.deleteOrder);

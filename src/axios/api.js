@@ -26,7 +26,17 @@ const apiEndpoints = {
 
     //product API
     GET_PRODUCT_LIST_API: '/api/v1/productS',
-    GET_PRODUCT_DETAILS_API: '/api/v1/product'
+    GET_PRODUCT_DETAILS_API: '/api/v1/product',
+
+    //order API
+    CREATE_ORDER_API: '/api/v1/order/new',
+    GET_MY_ORDER_API: '/api/v1/order/me',
+    GET_ORDER_DETAILS_API: '/api/v1/order',
+    GET_ALL_ORDERS_API: '/api/v1/admin/orders',
+    UPDATE_ORDER_API: '/api/v1/admin/order',
+    DELETE_ORDER_API: '/api/v1/admin/order',
+    CANCEL_ORDER_API: '/api/v1/admin/orders/cancel',
+
 }
 
 export default apiEndpoints;

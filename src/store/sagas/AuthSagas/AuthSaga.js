@@ -403,6 +403,10 @@ function* updateUserDetails({data}){
     try{
         let result = yield call(updateUserDetailsReq, {data})
         if(result.statusCode === 200){
+            let userData = yield call(checkAuthStatusReq)
+            if(userData.statusCode === 200){
+                yield put({ type: LOGIN_SUCCESS, payload: userData.data});  
+            }
             notify('success', result.message);
             yield put({ type: GET_USER_DETAILS_SUCCESS, payload: result.data});  
         } else{
@@ -455,13 +459,13 @@ function* getUserAddress({data}){
 export const updateUserAddressReq = async({data})=>{   
 
     const BODY={
+        country: data.country,
         city: data.city,
         state: data.state,
         address: data.address,
         pinCode: data.pinCode,
         locality: data.locality
     }
-    console.log(BODY)
 
     return axiosInstance.put(apiEndpoints.UPDATE_USER_ADDRESS_DETAILS_API, {data: BODY})
         .then(response => {
@@ -488,6 +492,7 @@ function* updateUserAddress({data}){
         let result = yield call(updateUserAddressReq, {data})
         if(result.statusCode === 200){
             notify('success', result.message);
+            data?.onSuccessCallback?.()
             yield put({ type: GET_USER_ADDRESS_SUCCESS, payload: result.data});  
         } else{
             yield put({ type: GET_USER_ADDRESS_FAIL, message: result?.response?.data?.error});

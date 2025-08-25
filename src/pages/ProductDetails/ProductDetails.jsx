@@ -46,11 +46,7 @@ function ProductDetails() {
   ]
 
   const buyNow = ()=>{
-    const isLoggedIn =  localStorage.getItem('isLoggedIn')
-    if (isLoggedIn.toLowerCase() === 'true')
-      navigate("/")
-    else
-      navigate("/login")
+    navigate("/account/checkout", { state: { productId: id, qty: quantity }});
   }
 
   useEffect(()=>{
@@ -138,7 +134,7 @@ function ProductDetails() {
               </div>
             </div>
 
-            <div className="reviews-container p-3">
+            <div className="reviews-container p-3">{console.log(productDetail)}
               <div className="heading">
                 <div>Ratings & Reviews</div>
                 <button type="button" className='rate-btn'>Rate Product</button>

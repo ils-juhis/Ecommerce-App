@@ -262,5 +262,24 @@ exports.SUCCESS = {
         customMessage: 'Cart items deleted successfully',
         type: 'CART_ITEM_DELETE'
     },
+
+    PROCESS_PAYMEMNT: {
+        statusCode: 200,
+        customMessage: 'Created successfully',
+        type: 'PROCESS_PAYMEMNT'
+    },
+
+    GET_STRIPE_SECRET_KEY: {
+        statusCode: 200,
+        customMessage: 'Get stripe scret key successfully',
+        type: 'GET_STRIPE_SECRET_KEY'
+    },
+
+    ORDER_CANCELLED: {
+        statusCode: 200,
+        customMessage: 'Order cancelled successfully',
+        type: 'ORDER_CANCELLED'
+    },
+
 };
 

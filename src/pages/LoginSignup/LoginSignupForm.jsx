@@ -65,7 +65,7 @@ function LoginSignupForm({type}) {
                         <Formik
                             initialValues={{
                                 email: '',
-                                password:'Vansh@123'
+                                password:''
                               }}
                             validationSchema={loginValidation}
                             onSubmit= {handleLogin}

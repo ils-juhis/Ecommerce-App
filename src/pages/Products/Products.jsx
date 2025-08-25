@@ -53,9 +53,9 @@ function Products() {
               loading ?
               <Loader/>
               :
-              products.length ?
+              products?.length ?
                 <>
-                  <div className="products-box">
+                  <div className="products-box">{console.log(products)}
                     {
                       products && products.slice(0, 10).map((elem, index)=>{
                         return(

@@ -1,3 +1,4 @@
+const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
 const Errorhandler = require("../utils/errorHandler");
@@ -25,9 +26,20 @@ exports.newOrder = catchAsyncErrors(async(req, res, next)=>{
       taxPrice,
       shippingPrice,
       totalPrice,
+      orderStatus: paymentInfo.status === "succeeded" ? "Order placed" : "Failed",
       paidAt: Date.now(),
       user: req.user._id,
     });
+
+    for (const item of orderItems) {
+      await updateStock(item.product, item.quantity);
+    }
+
+    await Cart.updateOne(
+      { user: req.user._id },
+      { $set: { cartItems: [] } }
+    );
+
     return universalFun.sendSuccess(
       responseMessage.SUCCESS.ORDER_CREATED,
       order,
@@ -37,7 +49,13 @@ exports.newOrder = catchAsyncErrors(async(req, res, next)=>{
 
 // get single Order
 exports.getSingleOrder = catchAsyncErrors(async(req, res, next)=>{
-  const orders = await Order.findById(req.params.id).populate("user", " name email")
+  const orders = await Order.findById(req.params.id).populate("user", " name email").populate("orderItems.product", "description slug").populate({
+    path: "orderItems.product",
+    populate: {
+      path: "category",          
+      select: "name slug"  
+    }
+  })
   if(!orders){
     return next( new Errorhandler(responseMessage.ERROR.ORDER_NOT_FOUND.customMessage, responseMessage.ERROR.ORDER_NOT_FOUND.statusCode))
   }
@@ -50,7 +68,7 @@ exports.getSingleOrder = catchAsyncErrors(async(req, res, next)=>{
 
 // get logged in user  Orders
 exports.myOrders = catchAsyncErrors(async(req, res, next)=>{
-  const orders = await Order.find({user: req.user._id})
+  const orders = await Order.find({user: req.user._id}).sort({ "createdAt": -1 })
 
   return universalFun.sendSuccess(
     responseMessage.SUCCESS.ALL_ORDER_FETCHED,
@@ -91,11 +109,6 @@ exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("You have already delivered this order", 400));
   }
 
-  if (req.body.status === "Shipped") {
-    order.orderItems.forEach(async (o) => {
-      await updateStock(o.product, o.quantity);
-    });
-  }
   order.orderStatus = req.body.status;
 
   if (req.body.status === "Delivered") {
@@ -112,8 +125,7 @@ exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
 
 async function updateStock(id, quantity) {
   const product = await Product.findById(id);
-
-  product.Stock -= quantity;
+  product.stock -= quantity;
 
   await product.save({ validateBeforeSave: false });
 }
@@ -134,3 +146,48 @@ exports.deleteOrder = catchAsyncErrors(async (req, res, next) => {
     res
   )
 });
+
+// cancel Order -- User/Admin
+exports.cancelOrder = catchAsyncErrors(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return next(
+      new Errorhandler(
+        responseMessage.ERROR.ORDER_NOT_FOUND.customMessage,
+        responseMessage.ERROR.ORDER_NOT_FOUND.statusCode
+      )
+    );
+  }
+
+  // only allow cancel if not delivered
+  if (order.orderStatus === "Delivered") {
+    return next(
+      new Errorhandler("You cannot cancel an order that has already been delivered", 400)
+    );
+  }
+
+  // restore stock since we already deducted during order placement
+  for (const item of order.orderItems) {
+    await restoreStock(item.product, item.quantity);
+  }
+
+  order.orderStatus = "Cancelled";
+  order.cancelledAt = Date.now();
+
+  await order.save({ validateBeforeSave: false });
+
+  return universalFun.sendSuccess(
+    responseMessage.SUCCESS.ORDER_CANCELLED || "Order cancelled successfully",
+    order,
+    res
+  );
+});
+
+async function restoreStock(id, quantity) {
+  const product = await Product.findById(id);
+
+  product.stock += quantity;
+
+  await product.save({ validateBeforeSave: false });
+}

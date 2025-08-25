@@ -185,6 +185,7 @@ function Profile() {
         
         <Formik
             initialValues={{
+                country: userAddressReducer.userAddress?.country,
                 city: userAddressReducer.userAddress?.city,
                 state: userAddressReducer.userAddress?.state,
                 address: userAddressReducer.userAddress?.address,
@@ -260,6 +261,15 @@ function Profile() {
                                                 </div>
                                             </div>
                                         </div>  
+                                        <div className="field">
+                                            <div className="field-name">Country</div>
+                                            <div className="field-box">
+                                                <Field type="text" name='country' placeholder='Country'  disabled={!editAddress}  autoComplete='off'/>
+                                                <div className="error">
+                                                    <ErrorMessage name='country'/>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     {editAddress && <button className='save-btn' type='submit' disabled={userAddressReducer.loading ||!formik.isValid || !formik.dirty}>
                                     {

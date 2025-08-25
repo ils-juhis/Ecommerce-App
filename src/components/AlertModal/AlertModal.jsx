@@ -2,6 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import './AlertModal.scss'
+import { CircularProgress } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -12,11 +13,9 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 3,
-  pb: 2
 };
 
-export default function AlertModal({alertModal, setAlertModal, name, onOK}) {
+export default function AlertModal({alertModal, setAlertModal, name, onOK, title, loading}) {
   const handleClose = () => setAlertModal(false);
 
   return (
@@ -27,22 +26,30 @@ export default function AlertModal({alertModal, setAlertModal, name, onOK}) {
             }
         }}
         open={alertModal}
-        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+
       >
         <Box sx={style}>
           <div className="alert-modal">
-
+            {
+              loading &&
+              <div className="loader">
+                <CircularProgress size={60} thickness={6} sx={{color: 'gray', opacity: 1}}/>
+              </div>
+            }
             <div className="my-4">
               <div className="title mb-3">Alert!</div>
-                {`Few items are unavailable for checkout. Are you sure, you want to checkout?`}
+                {title}
               </div>
               <div className="hr"></div>
               <div className="d-flex justify-content-between">
                 <div data-testid="cancel-btn" className="button" onClick={()=>{setAlertModal(false)}}>Cancel</div>
                 <div className="vhr"></div>
-                <div data-testid="confirm-del-btn" className="button delete" onClick={onOK}>Yes, Continue</div>
+                <div data-testid="confirm-del-btn" className="button delete" onClick={onOK}>
+                  Yes, Continue
+
+                </div>
               </div>
           </div>
         </Box>

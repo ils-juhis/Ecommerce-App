@@ -10,10 +10,10 @@ function ConfirmOrder({handleBack, handleNext, orderDetails, setOrderDetails}) {
   const dispatch = useDispatch()
   const cartItemsListReducer = useSelector(state=>state.cartItemsListReducer)
 
-  useEffect(()=>{
-    if(!cartItemsListReducer.cartItems)
-      dispatch(getCartItemsList())
-  },[])
+  // useEffect(()=>{
+  //   if(!cartItemsListReducer.cartItems)
+  //     dispatch(getCartItemsList())
+  // },[])
 
   return (
     <div className='overview-cart-container container-xl py-4 '>

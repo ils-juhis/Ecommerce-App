@@ -10,6 +10,7 @@ export default function ProfileDropdown() {
     const [state, setState] = useState(false)
     const dropRef = useRef(null);
     const dispatch = useDispatch()
+    const {isLoggedIn, userData} =  useSelector(state=> state.loginReducer)
 
     const handleLogout = (e)=>{
       e.preventDefault()
@@ -38,7 +39,7 @@ export default function ProfileDropdown() {
     <div id='profile-dropdown'  ref={dropRef}>
       <button type="button" className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center w-100'>
-          <span className='d-none d-md-block text-capitalize text-start overflow-hidden mx-3 user-name'>juhi sahuuuuuuuuuuu</span>
+          <span className='d-none d-md-block text-capitalize text-start overflow-hidden mx-3 user-name'>{userData.first_name + " " + userData.last_name}</span>
         </div>
         <div>
             <img src={arrowDownIcon} className={state? 'active arrow': 'arrow'} alt="" />

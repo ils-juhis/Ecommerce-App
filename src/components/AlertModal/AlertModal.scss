@@ -2,6 +2,8 @@
     text-align: center;
     font-weight: 500;
     font-size: 15px;
+    position: relative;
+    padding: 24px 24px 16px 24px;
     .icon{
         width: 50px;
         height: 50px;
@@ -43,6 +45,18 @@
         &.delete{
             color: rgb(0, 157, 255);
         }
+    }
+
+    .loader{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.079);
     }
 }
 

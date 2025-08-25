@@ -80,6 +80,7 @@ export const passwordUpdateValidation = ()=>{
 
 export const addressUpdateValidation = ()=>{
     return Yup.object({
+        country: Yup.string().required('*Country Name is required.'),
         city: Yup.string().required('*City Name is required.'),
         state: Yup.string().required('*State Name is required.'),
         address: Yup.string().required('*Address is required.'),

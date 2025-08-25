@@ -7,7 +7,7 @@ import CartItem from './CartItem/CartItem'
 import emptyBox from '../../assets/images/empty-box.png'
 import MetaData from '../../components/MetaData';
 import { useNavigate } from 'react-router-dom'
-import AlertModal from './AlertModal/AlertModal'
+import AlertModal from '../../components/AlertModal/AlertModal'
 import _ from 'lodash'
 
 function Cart() {
@@ -51,7 +51,7 @@ function Cart() {
         My Cart
       </div>
       {
-        cartItemsListReducer.loading && !cartItemsListReducer.cartItems?.cartItems?.length ?
+        cartItemsListReducer.loading ?
         <Loader/>:
         <div>
           <div className="d-flex flex-column flex-lg-row">
@@ -64,32 +64,35 @@ function Cart() {
                 })
               }
             </div>
-            <div className="price-details shadow-sm ms-0 ms-lg-3">
-              <div className="heading">Price Details</div>
-              <div className="data">
-                <div className="name">Price ({totalItems} items)</div>
-                <div className="value">Rs. {totalPrice}</div>
+            {
+              cartItemsListReducer.cartItems?.cartItems?.length>0 &&
+              <div className="price-details shadow-sm ms-0 ms-lg-3">
+                <div className="heading">Price Details</div>
+                <div className="data">
+                  <div className="name">Price ({totalItems} items)</div>
+                  <div className="value">Rs. {totalPrice}</div>
+                </div>
+                <div className="data">
+                  <div className="name">Delivery Charge</div>
+                  <div className="value text-success"> Free</div>
+                </div>
+                <div className="data total">
+                  <div className="name">Total Amount</div>
+                  <div className="value">Rs. {totalPrice}</div>
+                </div>
               </div>
-              <div className="data">
-                <div className="name">Delivery Charge</div>
-                <div className="value text-success"> Free</div>
-              </div>
-              <div className="data total">
-                <div className="name">Total Amount</div>
-                <div className="value">Rs. {totalPrice}</div>
-              </div>
+            }
             </div>
-          </div>
           {
             !cartItemsListReducer.cartItems?.cartItems?.length
             ?
             <div className='fw-bold text-center'>
-              <img src={emptyBox} alt="" width={'150px'} className='me-3'/>
+              <img src={emptyBox} alt="" width={'60px'} className='me-3'/>
               <div>Cart is empty.</div>
             </div>
             :
             <div className='checkout shadow-sm'>
-              <button onClick={()=>{ (_.filter(cartItemsListReducer.cartItems?.cartItems, i => i.product.stock === 0 || i.quantity > i.product.stock)).length ? setAlertModal(true) : navigate('/checkout')}}>Place Order</button>
+              <button onClick={()=>{ (_.filter(cartItemsListReducer.cartItems?.cartItems, i => i.product.stock === 0 || i.quantity > i.product.stock)).length ? setAlertModal(true) : navigate('/account/checkout')}}>Place Order</button>
             </div>
           }
         </div>
@@ -98,7 +101,8 @@ function Cart() {
             alertModal={alertModal} 
             setAlertModal={setAlertModal}
             name="account"
-            onOK={()=>navigate('/checkout')}
+            title={'Few items are unavailable for checkout. Are you sure, you want to checkout?'}
+            onOK={()=>navigate('/account/checkout')}
         />
     </div>
   )

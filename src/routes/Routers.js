@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Route, Routes } from 'react-router-dom'
 import Layout from '../components/layout/Layout'
@@ -10,30 +10,26 @@ import About from '../pages/About/About'
 import ProtectedRoute from './ProtectedRoute'
 import Account from '../pages/Account/Account'
 import Cart from '../pages/Cart/Cart'
-import Wishlist from '../pages/Wishlist/Wishlist'
 import Orders from '../pages/Orders/Orders'
 import Profile from '../pages/Profile/Profile'
 import ResetPassword from '../pages/ResetPassword/ResetPassword'
 import LoginSignup from '../pages/LoginSignup/LoginSignup'
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword'
 import NotFound from '../pages/NotFound/NotFound'
+import Checkout from '../pages/Checkout/Checkout'
+import { checkAuthStatus } from '../store/actions/AuthActions/AuthActions'
+import axios from 'axios'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import axiosInstance from '../axios/axiosInstance'
+import OrderDetails from '../pages/OrderDetails/OrderDetails'
 
 function Routers() {
     const dispatch = useDispatch() 
-    // const [stripeAPIKey, setStripeAPIKey] = useState('')
-
-    // async function getStripeAPIKey (){
-
-    //     const {data} = await axios.get(process.env.REACT_APP_BASE_URL + '/api/v1/stripeapikey', 
-    //     { withCredentials: true }
-    //   )
-    //     setStripeAPIKey(data.stripeApiKey)
-    //   }
     
-    //   useEffect(()=>{
-    //     dispatch(checkAuthStatus())
-    //     getStripeAPIKey()
-    //   },[])
+    useEffect(()=>{
+      dispatch(checkAuthStatus())
+    },[])
 
   return (
     <>
@@ -48,15 +44,21 @@ function Routers() {
             <Route path="account" element={< ProtectedRoute/> } >
                 <Route index element={<Account/> } />
                 <Route path='cart' element={<Cart/> } />
-                <Route path='wishlist' element={<Wishlist/> } />
                 <Route path='orders' element={<Orders/> } />
+                <Route path='orders/:id' element={<OrderDetails/> } />
                 <Route path='profile' element={<Profile/> } />
-            </Route>
-            <Route path='checkout' element={<ProtectedRoute/> } >
-                {/* {
-                stripeAPIKey &&
-                <Route index element={<Elements stripe={loadStripe(stripeAPIKey)}><Checkout/> </Elements>} />
-                } */}
+                <Route
+                  path="checkout"
+                  element={
+                    process.env.REACT_APP_STRIPE_API_KEY ? (
+                      <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_API_KEY)}>
+                        <Checkout />
+                      </Elements>
+                    ) : (
+                      <Checkout /> // fallback if no key
+                    )
+                  }
+                />
             </Route>
             </Route>
 

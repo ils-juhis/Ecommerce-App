@@ -16,7 +16,6 @@ function AddressDetailsForm({handleBack, handleNext, addressDetails, setAddressD
 
     useEffect(()=>{
         if(!userAddressReducer.loading && !userAddressReducer.error){
-            setAddressDetails(userAddressReducer.userAddress)
             setEditAddress(false)
         }else{
             userAddressFormRef.current?.resetForm()
@@ -27,17 +26,22 @@ function AddressDetailsForm({handleBack, handleNext, addressDetails, setAddressD
     <div className='address-details'>
         <Formik
             initialValues={{
+                country: userAddressReducer.userAddress?.country,
                 city: userAddressReducer.userAddress?.city,
                 state: userAddressReducer.userAddress?.state,
                 address: userAddressReducer.userAddress?.address,
                 locality: userAddressReducer.userAddress?.locality,
-                pinCode: userAddressReducer.userAddress?.pinCode
+                pinCode: userAddressReducer.userAddress?.pinCode 
             }}
+            validateOnMount={true}
             enableReinitialize
             innerRef={(f) => (userAddressFormRef.current = f)}
             validationSchema={addressUpdateValidation}
             onSubmit= {(values, resetForm)=>{
-                    dispatch(updateUserAddress(values))
+                    dispatch(updateUserAddress({
+                        ...values,
+                        onSuccessCallback: ()=>handleNext()
+                    }))
                 }}
             >
             {
@@ -102,6 +106,15 @@ function AddressDetailsForm({handleBack, handleNext, addressDetails, setAddressD
                                                 </div>
                                             </div>
                                         </div>  
+                                        <div className="field">
+                                            <div className="field-name">Country</div>
+                                            <div className="field-box">
+                                                <Field type="text" name='country' placeholder='Country'  disabled={!editAddress}  autoComplete='off'/>
+                                                <div className="error">
+                                                    <ErrorMessage name='country'/>
+                                                </div>
+                                            </div>
+                                        </div>
                                         {
                                             editAddress &&
                                             <button className='save-address-btn shadow-sm' type='submit' disabled={userAddressReducer.loading ||!formik.isValid || !formik.dirty}>
@@ -114,21 +127,12 @@ function AddressDetailsForm({handleBack, handleNext, addressDetails, setAddressD
                                             </button>  
                                         }
                                     </div>
+                                    <div className='d-flex justify-content-end my-5'>
+                                        <button className='save-btn shadow-sm' type='button' onClick={handleNext} disabled={userAddressReducer.loading || !formik.isValid || editAddress}>
+                                            Next
+                                        </button>
+                                    </div>
                                 </Form>
-                                <div className='d-flex justify-content-between my-5'>
-                                    <Button
-                                    color="inherit"
-                                    type="button"
-                                    sx={{height: '44px'}}
-                                    disabled={true}
-                                    onClick={handleBack}
-                                    >
-                                    Back
-                                    </Button>
-                                    <button className='save-btn shadow-sm' type='button' onClick={handleNext} disabled={userAddressReducer.loading || !formik.isValid || editAddress}>
-                                        Next
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     )

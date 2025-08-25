@@ -420,6 +420,7 @@ exports.updateAddress = catchAsyncErrors(async(req, res, next)=>{
   const user = await User.findById(req.user._id)
 
   user.address = {
+    country: req.body.country,
     city: req.body.city,
     state: req.body.state,
     address: req.body.address,

@@ -37,8 +37,8 @@ app.use(async (req, res, next) => {  //this function will decode the the crypto 
 });
 
 //route
-app.use("/api/v1", productRoutes)
 app.use("/api/v1", userRoutes)
+app.use("/api/v1", productRoutes)
 app.use("/api/v1", orderRoutes)
 app.use("/api/v1", categoryRoutes)
 app.use("/api/v1", cartRoutes)

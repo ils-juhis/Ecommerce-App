@@ -42,6 +42,10 @@ function CartItem({item}) {
         dispatch(deleteItemFromCart({productId: item?.product?._id})); 
     }
 
+    const buyNow = ()=>{
+        navigate("/account/checkout", { state: { productId: item?.product?._id, qty: quantity }});
+      }
+
   return (
     <div className="cart-item shadow-sm mb-2 p-2 d-flex">
         <div>
@@ -70,7 +74,7 @@ function CartItem({item}) {
                 <div className='product-price'>Rs. {item?.product?.price}</div>
             </div>
             <div>
-                <button type='button' className="shadow-sm buy-now" disabled={item?.product?.stock ? false : true}>Buy Now</button>
+                <button type='button' className="shadow-sm buy-now" onClick={buyNow} disabled={item?.product?.stock ? false : true}>Buy Now</button>
                 <button type='button' className=" remove-btn" onClick={handleRemove}> <RxCross2/> Remove</button>
             </div>        
         </div>

@@ -37,6 +37,10 @@ router.route('/address/update').put(isAuthenticatedUser , validator.updateAddres
 
 router.route('/me/update').put(isAuthenticatedUser, upload.single('profile_pic'), validator.updateProfile, userControllers.updateProfile)
 
+
+
+
+// Admin
 router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles("admin"), userControllers.getAllUser)
 
 router.route('/admin/user/:id')

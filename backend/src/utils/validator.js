@@ -209,6 +209,9 @@ exports.updateAddress = (req, res, next)=>{
     logging.startSection("updateAddress");
     logging.logRequest(req);
     let schema = Joi.object().keys({
+        country: Joi.string()
+            .trim()
+            .required(),
         city: Joi.string()
             .trim()
             .required(),
@@ -455,7 +458,8 @@ exports.newOrder = (req, res, next)=>{
             state: Joi.string().required(),
             country: Joi.string().required(),
             pinCode: Joi.number().integer().required(),
-            phoneNo: Joi.number().integer().required()
+            phoneNo: Joi.number().integer(),
+            locality: Joi.string()
         }),
 
         paymentInfo: Joi.object({
@@ -516,6 +520,7 @@ exports.updateOrder = (req, res, next) => {
       next();
     } 
 }
+
 
 exports.deleteOrder = (req, res, next) => {
     logging.startSection("deleteProduct");
