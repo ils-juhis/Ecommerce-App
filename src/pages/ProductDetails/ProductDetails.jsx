@@ -1,26 +1,30 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProductDetails } from '../../store/actions/ProductActions/ProductActions';
+import { deleteReview, getProductDetails } from '../../store/actions/ProductActions/ProductActions';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import moment from 'moment';
 import { AiOutlineMinus , AiOutlinePlus , AiFillStar } from 'react-icons/ai';
 import star from '../../assets/images/star.svg'
+import deleteIcon from '../../assets/images/delete.svg'
 import './ProductDetails.scss'
 import ProductDetailSkeleton from '../../components/Loader/ProductDetailSkeleton';
 import MetaData from '../../components/MetaData';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import { addItemToCart } from '../../store/actions/CartActions/CartActions';
 import { FaShoppingCart } from "react-icons/fa";
+import ReviewModal from '../../components/ReviewModal/ReviewModal';
 
 function ProductDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const {id} = useParams()
+  const {isLoggedIn, userData} = useSelector(state=>state.loginReducer)
   const {loading, productDetail, error} = useSelector(state=>state.productDetailsReducer)
   const cartItemsListReducer = useSelector(state=>state.cartItemsListReducer)
   const [currentImg, setCurrentImg] = useState("")
   const [quantity, setQuantity] = useState(1)
+  const [isOpen, setIsOpen] = useState(false)
 
   const rating = [
     {
@@ -47,6 +51,29 @@ function ProductDetails() {
 
   const buyNow = ()=>{
     navigate("/account/checkout", { state: { productId: id, qty: quantity }});
+  }
+
+  const handleAddToCart = ()=>{
+    if(!isLoggedIn){
+      navigate('/login')
+      return
+    }
+    dispatch(addItemToCart({quantity, productId: productDetail._id}))
+  }
+
+  const handleDelete=()=>{
+    dispatch(deleteReview({
+      productId: id,
+      reviewId: productDetail.reviews?.find(item=> item.isUserReview)._id
+    }))
+  }
+  
+  const handleRate = ()=>{
+    if(!isLoggedIn){
+      navigate('/login')
+      return
+    }
+    setIsOpen(true)
   }
 
   useEffect(()=>{
@@ -128,16 +155,16 @@ function ProductDetails() {
                     }
                   </button>
                   :
-                  <button type='button' className="shadow-sm add-to-cart" onClick={()=>{dispatch(addItemToCart({quantity, productId: productDetail._id}))}} disabled={productDetail?.stock ? false : true}><FaShoppingCart/> &nbsp; Add To Cart</button>
+                  <button type='button' className="shadow-sm add-to-cart" onClick={handleAddToCart} disabled={productDetail?.stock ? false : true}><FaShoppingCart/> &nbsp; Add To Cart</button>
                 }
                 <button type='button' className="shadow-sm buy-now" disabled={productDetail?.stock ? false : true} onClick={buyNow}>Buy Now</button>
               </div>
             </div>
 
-            <div className="reviews-container p-3">{console.log(productDetail)}
+            <div className="reviews-container p-3">
               <div className="heading">
                 <div>Ratings & Reviews</div>
-                <button type="button" className='rate-btn'>Rate Product</button>
+                <button type="button" onClick={handleRate} className='rate-btn'>Rate Product</button>
               </div>
               <div className="rating-box">
                 <div className='rating-data'>
@@ -183,6 +210,7 @@ function ProductDetails() {
                               <div className="post-time">
                                 , Posted on {moment(item?.createdAt).format("MMM, YYYY")}
                               </div>
+                              {item.isUserReview && <img className='ms-2' src={deleteIcon} onClick={handleDelete} alt="" />}
                             </div>
                           </div>
                         )
@@ -197,6 +225,11 @@ function ProductDetails() {
           </div>
         </div>
       }
+      <ReviewModal
+        data={productDetail}
+        open={isOpen}
+        handleClose={()=>setIsOpen(false)}
+      />
     </div>
   )
 }

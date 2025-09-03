@@ -1,14 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {Navigate, Outlet} from 'react-router-dom'
-
-const useAuth = () => {
-  return (localStorage.getItem('isLoggedIn')?.toLowerCase() === 'true')
-};
 
 const  ProtectedRoute = () => {
 
-  const isLoggedIn =  useAuth()
-  return isLoggedIn ? <Outlet/> : <>{localStorage.clear()} <Navigate to="/login"/></>
+  const  {isLoggedIn, } = useSelector(state=> state.loginReducer)
+  return isLoggedIn ? <Outlet/> : <>{localStorage.clear()} <Navigate to="/login" replace={true}/></>
 }
 
 export default ProtectedRoute;

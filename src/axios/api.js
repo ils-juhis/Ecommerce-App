@@ -37,6 +37,11 @@ const apiEndpoints = {
     DELETE_ORDER_API: '/api/v1/admin/order',
     CANCEL_ORDER_API: '/api/v1/admin/orders/cancel',
 
+
+    //rating API
+    UPDATE_REVIEW_API: '/api/v1/review',
+    DELETE_REVIEW_API: '/api/v1/review',
+
 }
 
 export default apiEndpoints;

@@ -178,13 +178,20 @@ exports.getProductDetails = catchAsyncErrors(async (req, res, next) => {
         });
 
         canReview = order ? true : false;
+        
+        // check if logged user matched
+        const reviewsWithFlag = product.reviews.map((review) => ({
+          ...review.toJSON(),
+          isUserReview: userId && review.user.toString() === userId, // true if logged-in user wrote it
+        }));
 
         return universalFun.sendSuccess(
           responseMessage.SUCCESS.PRODUCT_DETAILS,
           {
             ...product.toJSON(),
             addedInCart: cart ? true : false,
-            canReview
+            canReview,
+            reviews: reviewsWithFlag
           },
           res
         );
@@ -220,7 +227,7 @@ exports.createProductReview = catchAsyncErrors(async(req, res, next)=>{
     const {rating, comment, productId} = req.body;
     const review = {
         user: req.user._id,
-        name: req.user.first_name + req.user.last_name,
+        name: req.user.first_name + " " + req.user.last_name,
         rating: Number(rating),
         comment
     }

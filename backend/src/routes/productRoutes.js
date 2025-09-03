@@ -16,8 +16,8 @@ router.route("/product/:id").get(validator.getProductDetails, productControllers
 
 router.route("/review").post(isAuthenticatedUser, validator.createProductReview, productControllers.createProductReview)
 
-router.route("/reviews")
-  .get(validator.getProductReviews, productControllers.getProductReviews)
+router.route("/review")
+  // .get(validator.getProductReviews, productControllers.getProductReviews)
   .delete(isAuthenticatedUser, validator.deleteReview, productControllers.deleteReview);
   
 module.exports = router;

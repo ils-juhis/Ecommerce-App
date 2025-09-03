@@ -35,32 +35,37 @@ function Routers() {
     <>
         <Routes>
             <Route path="/" element={<Layout/> } >
-            <Route index element={<Home />} />
-            <Route path="products" element={<Products/> }/>
-            <Route path="product/:categorySlug/:productNameSlug/:id" element={<ProductDetails/> }/>
-            <Route path="contact" element={<Contact/> } />
-            <Route path="about" element={<About/> } />
+              <Route index element={<Home />} />
+              <Route path="products" element={<Products/> }/>
+              <Route path="product/:categorySlug/:productNameSlug/:id" element={<ProductDetails/> }/>
+              <Route path="contact" element={<Contact/> } />
+              <Route path="about" element={<About/> } />
 
-            <Route path="account" element={< ProtectedRoute/> } >
-                <Route index element={<Account/> } />
-                <Route path='cart' element={<Cart/> } />
-                <Route path='orders' element={<Orders/> } />
-                <Route path='orders/:id' element={<OrderDetails/> } />
-                <Route path='profile' element={<Profile/> } />
-                <Route
-                  path="checkout"
-                  element={
-                    process.env.REACT_APP_STRIPE_API_KEY ? (
-                      <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_API_KEY)}>
-                        <Checkout />
-                      </Elements>
-                    ) : (
-                      <Checkout /> // fallback if no key
-                    )
-                  }
-                />
+              <Route path="account" element={< ProtectedRoute/> } >
+                  <Route index element={<Account/> } />
+                  <Route path='cart' element={<Cart/> } />
+                  <Route path='orders' element={<Orders/> } />
+                  <Route path='orders/:id' element={<OrderDetails/> } />
+                  <Route path='profile' element={<Profile/> } />
+                  <Route
+                    path="checkout"
+                    element={
+                      process.env.REACT_APP_STRIPE_API_KEY ? (
+                        <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_API_KEY)}>
+                          <Checkout />
+                        </Elements>
+                      ) : (
+                        <Checkout /> // fallback if no key
+                      )
+                    }
+                  />
+              </Route>
             </Route>
+
+            <Route path="/admin/" element={<Layout/> } >
+              <Route></Route>
             </Route>
+
 
             <Route path="reset-password/:token" element={<ResetPassword/> } />
             <Route path="forgot-password" element={<ForgotPassword/> }/>

@@ -74,7 +74,6 @@ function* login({data}){
     try{
         let result = yield call(loginReq, {data})
         if(result.statusCode === 200){
-            console.log(result.data)
             yield put({ type: LOGIN_SUCCESS, payload: result.data});  
             localStorage.setItem('isLoggedIn', true)
             notify('success', result.message);

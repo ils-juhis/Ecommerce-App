@@ -31,6 +31,7 @@ export function forgotPasswordReducer(state = {
 
 //FOR LOGIN AND LOGOUT
 export function loginReducer(state = {
+    loadingauthcheck: true,
     loading: false,
     isLoggedIn: false,
     userData:null,
@@ -50,6 +51,7 @@ export function loginReducer(state = {
         isLoggedIn: true,
         userData: action.payload,
         loading: false,
+        loadingauthcheck: false,
       }
 
     case type.INCREASE_CART_COUNT:
@@ -84,6 +86,7 @@ export function loginReducer(state = {
         ...state,
         error: action?.error?.data?.message,
         loading: false,
+        loadingauthcheck: false,
         isLoggedIn: false
       }
     

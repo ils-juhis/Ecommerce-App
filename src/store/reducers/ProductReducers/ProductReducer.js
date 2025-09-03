@@ -42,7 +42,8 @@ export function productListReducer(state = {
 export function productDetailsReducer(state = {
     loading: false,
     productDetail: null,
-    error:null
+    error:null,
+    updateReviewLoader: false
 }, action) {
 
   switch (action.type) {
@@ -73,6 +74,27 @@ export function productDetailsReducer(state = {
         productDetail: {...state.productDetail , addedInCart: true, },
         error: null,
         loading: false,
+      }
+
+    case type.ADD_UPDATE_REVIEWS:
+      return {
+        ...state,
+        updateReviewLoader: true,
+      }
+    case type.ADD_UPDATE_REVIEWS_SUCCESS:
+      return {
+        ...state,
+        updateReviewLoader: false,
+      }
+
+
+    case type.DELETE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        productDetail: {
+          ...state.productDetail,
+          reviews: state.productDetail.reviews.filter(item=> !item.isUserReview)
+        },
       }
 
     default:

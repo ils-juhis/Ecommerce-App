@@ -2,12 +2,15 @@ import React, { Suspense, useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar/Navbar';
 import Footer from './Footer/Footer';
+import { useSelector } from 'react-redux';
+import PageLoader from '../PageLoader/PageLoader';
 const Layout = () => {
   const [state, setState] = useState(false)
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
   const [windowSize, windowSizeSet] = useState(null)
   const { key } = useLocation();
+  const  {loadingauthcheck} = useSelector(state=> state.loginReducer)
 
 
   const outsideClickHandler = (e)=>{
@@ -38,13 +41,21 @@ const Layout = () => {
   },[state])
 
   return <>
-    <Navbar toggleBtn={toggleBtn} state={state} navRef={navRef} hamburgerRef={hamburgerRef}/>
-      <div key={key}>
-        <Suspense fallback={<div style={{height: 'calc(100vh - 60px)', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}></div>}>        
-          <Outlet />
-        </Suspense>
-      </div>
-    <Footer />
+  {
+    loadingauthcheck
+    ?
+    <PageLoader open={loadingauthcheck}/>
+    :
+    <>
+      <Navbar toggleBtn={toggleBtn} state={state} navRef={navRef} hamburgerRef={hamburgerRef}/>
+        <div key={key}>
+          <Suspense fallback={<div style={{height: 'calc(100vh - 60px)', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}></div>}>        
+            <Outlet />
+          </Suspense>
+        </div>
+      <Footer />
+    </>
+  }
   </>;
 }
 
