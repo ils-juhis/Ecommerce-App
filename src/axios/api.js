@@ -42,6 +42,9 @@ const apiEndpoints = {
     UPDATE_REVIEW_API: '/api/v1/review',
     DELETE_REVIEW_API: '/api/v1/review',
 
+    //Admin Routes
+    GET_DASHBOARD_DATA_API: '/api/v1/admin/dashboard',
+
 }
 
 export default apiEndpoints;

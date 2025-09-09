@@ -22,6 +22,7 @@ import {
     cartItemsListReducer
 } from '../reducers/CartReducers/CartReducer'
 import { orderReducer } from './OrderReducers/OrderReducers'
+import { dashboardReducer } from './AdminReducers/AdminReducer'
 
 const rootReducer = combineReducers ({
     forgotPasswordReducer ,
@@ -35,7 +36,8 @@ const rootReducer = combineReducers ({
     productDetailsReducer,
     categoryListReducer,
     cartItemsListReducer,
-    orderReducer
+    orderReducer,
+    dashboardReducer
 })
 
 export default rootReducer;

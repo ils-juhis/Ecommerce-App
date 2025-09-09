@@ -41,6 +41,8 @@ router.route('/me/update').put(isAuthenticatedUser, upload.single('profile_pic')
 
 
 // Admin
+router.route('/admin/dashboard').get(isAuthenticatedUser, authorizeRoles("admin"), userControllers.getDashboard)
+
 router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles("admin"), userControllers.getAllUser)
 
 router.route('/admin/user/:id')

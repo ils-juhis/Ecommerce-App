@@ -1,4 +1,5 @@
-import {  TbTruckDelivery, Tb24Hours} from 'react-icons/tb'
+import {  TbTruckDelivery} from 'react-icons/tb'
+import { FaClockRotateLeft } from "react-icons/fa6";
 import {RiMoneyDollarCircleLine} from 'react-icons/ri';
 import { BiSolidOffer} from 'react-icons/bi'
 
@@ -11,7 +12,7 @@ export const servicesData = [
     {
         title: "Support 24/7",
         description: "Free shipping on all order",
-        icon: <Tb24Hours color='#84caeb'/>
+        icon: <FaClockRotateLeft color='#84caeb'/>
     },
     {
         title: "Money Return",

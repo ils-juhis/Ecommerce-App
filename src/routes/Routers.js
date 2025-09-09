@@ -23,6 +23,12 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import axiosInstance from '../axios/axiosInstance'
 import OrderDetails from '../pages/OrderDetails/OrderDetails'
+import AdminLayout from '../pages/Admin/AdminLayout/AdminLayout'
+import Dashboard from '../pages/Admin/Dashboard/Dashboard'
+import AdminProducts from '../pages/Admin/AdminProducts/AdminProducts'
+import AdminOrders from '../pages/Admin/AdminOrders/AdminOrders'
+import AddReviews from '../pages/Admin/AdminReviews/AdminReviews'
+import AdminUsers from '../pages/Admin/AdminUsers/AdminUsers'
 
 function Routers() {
     const dispatch = useDispatch() 
@@ -62,8 +68,12 @@ function Routers() {
               </Route>
             </Route>
 
-            <Route path="/admin/" element={<Layout/> } >
-              <Route></Route>
+            <Route path="admin/" element={<AdminLayout/> } >
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<AdminProducts /> }/>
+              <Route path="orders" element={<AdminOrders /> }/>
+              <Route path="reviews" element={<AddReviews /> }/>
+              <Route path="users" element={<AdminUsers /> }/>
             </Route>
 
 

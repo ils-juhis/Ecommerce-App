@@ -2,6 +2,7 @@ const saltedMd5=require('salted-md5')
 const jwt = require('jsonwebtoken')
 const crypto = require("node:crypto");
 const User = require("../models/userModel");
+const Product = require("../models/productModel");
 const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 const Errorhandler = require("../utils/errorHandler");
@@ -153,7 +154,8 @@ exports.loginUser = catchAsyncErrors(async(req, res, next)=>{
     authenticated: true,
     first_name: user?.first_name,
     last_name: user?.last_name,
-    cartItemsCount
+    cartItemsCount,
+    role: user?.role
   }
 
   return universalFun.sendSuccess(
@@ -189,7 +191,8 @@ exports.authStatus = catchAsyncErrors(async (req, res, next) => {
           authenticated: true,
           first_name: user?.first_name,
           last_name: user?.last_name,
-          cartItemsCount
+          cartItemsCount,
+          role: user?.role
         }
         return universalFun.sendSuccess(
           responseMessage.SUCCESS.LOGIN,
@@ -452,6 +455,127 @@ exports.deleteAccount = catchAsyncErrors(async(req, res, next)=>{
   return universalFun.sendSuccess(
     responseMessage.SUCCESS.USER_LOGOUT,
     {},
+    res
+  )
+})
+
+function formatDate(date, granularity = "daily") {
+  const d = new Date(date);
+
+  if (granularity === "monthly") {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  if (granularity === "weekly") {
+    const firstDayOfYear = new Date(d.getFullYear(), 0, 1);
+    const pastDays = Math.floor((d - firstDayOfYear) / 86400000);
+    const week = Math.ceil((pastDays + firstDayOfYear.getDay() + 1) / 7);
+    return `${d.getFullYear()}-W${String(week).padStart(2, "0")}`;
+  }
+
+  // daily
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getRevenueTrend(orders, granularity = "daily") {
+  const trend = {};
+
+  for (const order of orders) {
+    if (["Processing", "Shipped", "Delivered"].includes(order.orderStatus)) {
+      const key = formatDate(order.createdAt, granularity);
+      trend[key] = (trend[key] || 0) + order.totalPrice;
+    }
+  }
+
+  // convert object → sorted array for chart
+  return Object.keys(trend)
+    .sort()
+    .map(date => ({ date, revenue: trend[date] }));
+}
+
+function getRevenueByCategory(orders) {
+  const categoryRevenue = {};
+  
+  for (const order of orders) {
+    if (["Processing", "Shipped", "Delivered"].includes(order.orderStatus)) {
+      for (const item of order.orderItems) {
+        const category = item.product?.category.name || "Uncategorized";
+        const itemRevenue = item.price * item.quantity;
+
+        if (!categoryRevenue[category]) {
+          categoryRevenue[category] = { revenue: 0, orders: 0 };
+        }
+
+        categoryRevenue[category].revenue += itemRevenue;
+        categoryRevenue[category].orders += item.quantity;
+      }
+    }
+  }
+
+  return Object.keys(categoryRevenue).map(cat => ({
+    category: cat,
+    revenue: categoryRevenue[cat].revenue,
+    orders: categoryRevenue[cat].orders
+  }));
+}
+
+
+
+//get admin dashboard data
+exports.getDashboard = catchAsyncErrors(async (req, res, next)=>{
+  const products = await Product.find();
+  const orders = await Order.find().populate({
+    path: "orderItems.product",
+    populate: {
+      path: "category",          
+      select: "name slug"  
+    }
+  });
+  const users = await User.find();
+
+  let total_revenue = 0;
+
+  for (const order of orders) {
+    if (["Processing", "Shipped", "Delivered"].includes(order.orderStatus)) {
+      total_revenue += order.totalPrice;
+    }
+  }
+
+  
+  // Sales Over Time  -- Daily/weekly/monthly revenue trend
+  const dailySales   = getRevenueTrend(orders, "daily");
+  const weeklySales  = getRevenueTrend(orders, "weekly");
+  const monthlySales = getRevenueTrend(orders, "monthly");
+
+  //Revenue by Category
+  const revenueByCategory = getRevenueByCategory(orders);
+
+  //Order Status Breakdown
+  const statusCount = {};
+  for (const order of orders) {
+    const status = order.orderStatus || "Unknown";
+    if (!statusCount[status]) {
+      statusCount[status] = 0;
+    }
+
+    statusCount[status] += 1;
+  }
+
+  return universalFun.sendSuccess(
+    responseMessage.SUCCESS.USERS_DATA_FETCH,
+    {
+      total_products: products.length,
+      total_users: users.length,
+      total_orders: orders.length,
+      total_revenue,
+      salesOverTime: {
+        daily: dailySales,
+        weekly: weeklySales,
+        monthly: monthlySales
+      },
+      revenueByCategory,
+      statusCount
+    },
     res
   )
 })

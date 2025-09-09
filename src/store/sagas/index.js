@@ -4,6 +4,7 @@ import categorySaga from './CategorySagas/CategorySaga';
 import authSaga from './AuthSagas/AuthSaga';
 import cartSaga from './CartSagas/CartSaga';
 import orderSaga from './OrderSagas/OrderSaga';
+import adminSaga from './AdminSagas/AdminSaga';
 
 export default function* rootSaga() {
     return yield all([
@@ -11,6 +12,7 @@ export default function* rootSaga() {
         productSaga(),
         categorySaga(),
         cartSaga(),
-        orderSaga()
+        orderSaga(),
+        adminSaga()
     ]);
 }

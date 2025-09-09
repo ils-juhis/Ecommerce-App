@@ -10,7 +10,7 @@ function LoginSignup({type}) {
 
     const isLoggedIn =  localStorage.getItem('isLoggedIn')
     if(isLoggedIn?.toLowerCase() === 'true'  ||  loginReducer.isLoggedIn){
-        return <Navigate to='/'/>
+        return loginReducer.userData?.role==='admin' ? <Navigate to='/admin'/> : <Navigate to='/'/>
     }
 
   return (

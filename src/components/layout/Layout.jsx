@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar/Navbar';
 import Footer from './Footer/Footer';
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ const Layout = () => {
   const hamburgerRef = useRef(null);
   const [windowSize, windowSizeSet] = useState(null)
   const { key } = useLocation();
-  const  {loadingauthcheck} = useSelector(state=> state.loginReducer)
+  const  {loadingauthcheck, userData} = useSelector(state=> state.loginReducer)
 
 
   const outsideClickHandler = (e)=>{
@@ -39,6 +39,11 @@ const Layout = () => {
         setState(true)
       }
   },[state])
+
+  if(userData?.role==='admin'){
+    return <Navigate to={"/admin"} />
+  }
+
 
   return <>
   {

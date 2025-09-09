@@ -20,7 +20,8 @@ function Navbar({toggleBtn, hamburgerRef, state, navRef}) {
   const handleSearch = ()=>{
     if(searchText){
       navigate({
-        pathname: '/products',
+        pathname: '/products',    
+
         search: `?${createSearchParams([["keyword", searchText]])}`,
       })
     }
